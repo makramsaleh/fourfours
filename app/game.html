@@ -1,0 +1,529 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Connections</title>
+
+        <link rel="stylesheet" href="stuff/reset.css">
+        
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="stuff/jquery-ui.min.js"></script>
+        
+
+        <style>
+            body {
+                background-color: #B6A8FE;
+                font-family: Arial, Helvetica, sans-serif;
+                color: #999;
+            }
+            h1 { 
+                color:gray;
+            }
+            .headline {
+                font-size: 1.5em;
+                padding: 40px 0px;
+                text-align: center;
+            }
+            #container {
+                margin: 20px auto;
+                overflow: auto;
+                background-color: #FFF;
+                width: 390px;
+                border-radius: 10px;
+                position: relative;
+            }
+            #grid { 
+                margin:10px auto;
+                position: relative;
+                width: 350px;
+                height: 350px;
+            }
+            .group {
+                position: absolute;
+                height: 80px;
+                width: 350px;
+                background-color: #585B4A;
+                border-radius: 8px;
+                z-index: 100;
+                color: #16170F;
+                text-align: center;
+                text-transform: uppercase;
+            }
+            .group .t {
+                font-weight: bold;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .group .w {
+                opacity: 0.7;
+                font-size: 0.8em;
+            }
+            .word {
+                position: absolute;
+                width:80px;
+                height:80px;
+                background-color: #F0F1E8;
+                border-radius: 8px;
+                color: #16170F;
+                line-height: 80px;
+                cursor: pointer;
+                text-transform: uppercase;
+                text-align: center;
+                font-weight: bold;
+                z-index: 10;
+            }
+            .word.selected {
+                background-color: #585B4A;
+                color: #F5F7EB;
+            }
+            .buttons {
+                width: 350px;
+                margin: 40px auto;
+                overflow: auto;
+            }
+            .button {
+                border-radius: 100px;
+                padding: 10px 0;
+                margin-right: 10px;
+                float: left;
+                border: 1px solid #000;
+                width:110px;
+                text-align: center;
+                cursor: pointer;
+                color:#333;
+            }
+            .button.submit, .button.primary {
+                margin-right: 0px;
+                background-color: #030303;
+                color: #F5F7EB;
+            }
+            .button.disabled {
+                background-color: #fff;
+                color:#ccc;
+                border-color: #ccc;
+            }
+            .button.results {
+                float: none;
+                margin: 0 auto;
+            }
+            .pop {
+                position: absolute;
+                z-index: 200;
+                width: 100%;
+                height: 100%;
+                background: #fff;
+                border-radius: 8px;
+            }
+            .pop_close {
+                position: absolute;
+                right:0;
+                top:0;
+                width:50px;
+                height:50px;
+                padding: 10px;
+                text-align: center;
+                cursor: pointer;
+            }
+            .pop_content {
+                margin: 80px;
+                color: #16170F;
+                text-align: center;
+            }
+            .pop_content p {
+                margin: 20px 0;
+                font-size: 1.3em;
+            }
+            .pop_content h2 {
+                font-weight: bold;
+                font-size: 2em;
+                letter-spacing: -0.05em;
+            }
+            .pop_content .button {
+                float: none;
+                width: auto;
+                margin: 0;
+            }
+            .trys {
+                width: 100px;
+                margin: 0 auto;
+                margin-bottom: 20px;
+                overflow: auto;
+            }
+            .trys div {
+                width: 23px;
+                height: 23px;
+                margin: 1px;
+                background-color: #585B4A;
+                border-radius: 4px;
+                float: left;
+            }
+            .mistakes {
+                overflow: auto;
+                margin: 0 auto;
+                margin-top: 40px;
+                width: 240px;
+                height: 18px;
+            }
+            .mistakes span {
+                float: left;
+                font-size: 0.8em;
+                margin-right: 8px;
+            }
+            .mistakes div {
+                width: 13px;
+                height: 13px;
+                background: #585B4A;
+                border-radius: 100px;
+                margin: 1px 3px;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+
+            <div id="results_pop" class="pop">
+                <div class="pop_close" onclick="hideResults()"><img src="stuff/x.png" width="100%"></div>
+                <div class="pop_content">
+                    <h2>Amazing!</h2>
+                    <p>Connections #02</p>
+                    <div class="trys">
+                        
+                    </div>
+                    <div class="button primary">Share Your Results</div>
+                    <p></p>
+                    <div class="button">Play Next Puzzle</div>
+                </div>
+            </div>
+
+            <h1 class="headline">Create four groups of four!</h1>    
+            <div id="grid">
+                <!-- <div id="w0" class="word"></div> -->
+            </div>
+
+            <div class="mistakes">
+                <span>Mistakes Remaining:</span>
+            </div>
+
+            <div class="buttons" id="buttons_default">
+                <div class="button" onclick="reshuffleAll(true)">Shuffle</div>
+                <div class="button deselect" onclick="deselectAll()">Deselect All</div>
+                <div class="button submit disabled" onclick="onSubmit()">Submit</div>
+            </div>
+
+            <div class="buttons" id="buttons_results">
+                <div class="button results primary" onclick="viewResults()">View Results</div>
+            </div>
+
+        </div>
+    </body>
+
+    <script type="text/javascript">
+        //---------------------------- WORDS ----------------------------//
+        // Green
+        // Yellow
+        // Blue
+        // Purple
+        /*
+        const WORDS = [
+            ["Musicals", ["Rent", "Annie", "Chicago", "Hamilton"]],
+            ["Luxury brands", ["Chanel", "Burberry", "Fendi", "Gucci"]],
+            ["US based family", ["Castro", "Cotran", "Orchowsa", "Froelich"]],
+            ["4-syllable names", ["Majdalani", "Mississippi", "Casablanca", "Valentino"]]
+        ];
+        */
+        /*
+        const WORDS = [
+            ["Musicals", ["Rent", "Annie", "Chicago", "Hamilton"]],
+            ["Luxury brands", ["Chanel", "Burberry", "Fendi", "Gucci"]],
+            ["US based family", ["Castro", "Cotran", "Orchowsa", "Froelich"]],
+            ["4-syllable names", ["Majdalani", "Mississippi", "Casablanca", "Valentino"]]
+        ];
+        */
+        const WORDS = [
+            ["Musicals", ["1 a", "1 b", "1 c", "1 d"]],
+            ["Luxury brands", ["2 a", "2 b", "2 c", "2 d"]],
+            ["US based family", ["3 a", "3 b", "3 c", "3 d"]],
+            ["4-syllable names", ["4 AAA", "4 BBB", "4 CCC", "4 DDD"]]
+        ];
+
+        //---------------------------- SETTINGS ----------------------------//
+        COLORS = ["#A1C45B", "#F9DF6B", "#B3C5F1", "#B882C6"];
+        CONGRATS = ["Perfect!", "Amazing!", "Nice!", "Phew!", "Oh no!"]; // zero mistake, 1, 2, 3 or 4, none
+        EMOJIS = ["🟩","🟨","🟦","🟪"];
+        SIZE = 80;
+        SPACING = 10;
+        SPEED = 500;
+        ALLOWED_MISTAKES = 4;
+
+        //---------------------------- Config ----------------------------//
+        let full_width = SIZE*4 + SPACING*3;
+        let selected_count = 0;
+        let mistakes = 0;
+        let groups_found = [];
+        let all_guesses = [];
+        let words_places = [];
+        let game_over = false;
+        
+        //---------------------------- GRID ----------------------------//
+        function deselectAll() {
+            selected_count = 0;
+            $(".selected").removeClass("selected");
+            $(".submit").addClass("disabled");
+            $(".deselect").addClass("disabled");
+        }
+        function toggleSelect(e) {
+            if(game_over) return;
+
+            if($(e).hasClass("selected")) {
+                // Unselect
+                selected_count -= 1;
+                $(e).toggleClass("selected");
+            } else {
+                // Select
+                if(selected_count < 4) {
+                    $(e).toggleClass("selected");
+                    selected_count += 1;
+                } else {
+                    $(e).effect("shake", {distance:5});
+                }
+            }
+            if($(".selected").length == 4) {
+                $(".submit").removeClass("disabled");
+            } else {
+                $(".submit").addClass("disabled");
+            }
+
+            if($(".selected").length > 0) {
+                $(".deselect").removeClass("disabled");
+            } else {
+                $(".deselect").addClass("disabled");
+            }
+        }
+
+        function onSubmit(){
+            if($(".selected").length != 4) return;
+
+            let found_group = checkSelectedGroup();
+            if(found_group != -1) {
+                // Matching group
+                groups_found.push(found_group);
+                moveWinningGroup(found_group);
+                if(checkGameOver()) {
+                    // Game over - all guessed
+                    afterGameOver();
+                }
+            } else {
+                // Not matching
+                $(".selected").effect("shake", {distance:5});
+                //deselectAll();
+                mistakes += 1;
+                //refreshMistakes();
+                removeMistake();
+                if(mistakes == ALLOWED_MISTAKES) {
+                    // Game over - mistakes
+                    afterGameOver();
+                }
+            }
+            console.log(all_guesses);
+        }
+
+        function moveWinningGroup(group) {
+            // Remove found words from places array
+            let index = 0;
+            while(index < words_places.length) {
+                if(words_places[index][0] == group) {
+                    let spl = words_places.splice(index, 1);
+                    console.log(spl);
+                    continue;
+                }
+                index++;
+            }
+            // Animate
+            let c = 0;
+            $(".selected").each(function(){
+                $(this).animate({"top": (groups_found.length-1) * (SIZE+SPACING), "left": c*(SIZE+SPACING), "backgroundColor":COLORS[group]}, SPEED);
+                c++;
+            });
+            addGroupBox(group);
+            // Move other words to new places
+            reshuffleAll(true);
+        }
+
+        function addGroupBox(group) {
+            let gr = $("<div></div>")
+                .addClass("group")
+                .css({"backgroundColor":COLORS[group], "top":(groups_found.length-1)*(SIZE+SPACING)})
+                .hide()
+                .html('<div><div class="t">'+WORDS[group][0]+'</div><div class="w">'+WORDS[group][1].join(", ")+'</div></div>')
+            $("#grid").append(gr);
+            $(gr).delay(SPEED).fadeIn(SPEED);
+        }
+
+        function resetFontSizes() {
+            $(".word").each(function(e){
+                let max = 16;
+                let w = $(this).text();
+                let size = max;
+                if(w.length > 6) {
+                    size = Math.max(Math.abs(max - w.length) * 1.5, 8);
+                }
+                $(this).css("fontSize", size);
+            });
+        }
+
+        function extractRemainingWords() {
+            let rem = [];
+            for (var i=0; i<4; i++) {
+                if(groups_found.indexOf(i) != -1) continue;
+                for (var w=0; w<4; w++) {
+                    rem.push(WORDS[i][1][w]);
+                }
+            }
+            rem = rem.sort( () => .5 - Math.random() );
+            return rem;
+        }
+
+        function addAllWordBlocks() {
+            let index = 0;
+            for (var i=0; i<4; i++) {
+                for (var w=0; w<4; w++) {
+                    let d = $("<div></div>")
+                        .addClass("word")
+                        .attr("id", "w"+index)
+                        .text(WORDS[i][1][w])
+                        .on("click", function(){ toggleSelect(this); })
+                    $("#grid").append(d);
+                    index++;
+                    words_places.push([i,d,i,w]); // [0 group, 1 word obj, 2 row, 3 col]
+                }
+            }
+            resetFontSizes();
+            reshuffleAll(false);
+        }
+
+        function reshuffleAll(animate) {
+            deselectAll();
+            // Shuffle remaining words
+            words_places = words_places.sort( () => .5 - Math.random() );
+            // Assign new places
+            let index = 0;
+            let starting_row = groups_found.length; // Skipping first rows where categs are found
+            for (var i=starting_row; i<4; i++) {
+                for (var w=0; w<4; w++) {
+                    words_places[index][2] = i;
+                    words_places[index][3] = w;
+                    index++;
+                }
+            }
+            // Animate
+            for(var i=0; i<words_places.length; i++) {
+                let location = {"top":words_places[i][2]*(SIZE+SPACING), "left":words_places[i][3]*(SIZE+SPACING)};
+                if(animate) {
+                    $(words_places[i][1]).delay(Math.random()*300).animate(location, SPEED);
+                } else {
+                    $(words_places[i][1]).css(location);
+                }
+            }
+        }
+
+        function checkSelectedGroup() {
+            let guessed = [];
+            $(".selected").each(function() {
+                guessed.push( findGroup($(this).text()) );
+            });
+            all_guesses.push(guessed);
+            let group = guessed[0];
+            for(var i=1; i<4; i++) {
+                if(guessed[i] != group) return -1;
+                group = guessed[i];
+            }
+            return group;
+        }
+
+        function findGroup(word) {
+            for(var g=0; g<4; g++) {
+                let wd = WORDS[g][1];
+                for(var w=0; w<4; w++) {
+                    if(wd[w] == word) return g;
+                }
+            }
+            return -1;
+        }
+
+        function checkGameOver() {
+            return (groups_found.length == 4);
+        }
+
+        function afterGameOver() {
+            game_over = true;
+            $("#buttons_results").fadeIn(SPEED);
+            $("#buttons_default").fadeOut(SPEED);
+
+            // Show tries/score
+            for (var r=0; r<all_guesses.length; r++) {
+                for(var c=0;c<4; c++) {
+                    let d = $("<div></div>").css({"backgroundColor":COLORS[ all_guesses[r][c] ]})
+                    $(".trys").append(d);
+                }
+            }
+
+            // Show title
+            // [ zero mistake, 1, 2, 3 or more, none ]
+            let t = CONGRATS[3];
+            if(all_guesses.length == 4) {
+                t = CONGRATS[0];
+            } else if(all_guesses.length == 5) {
+                t = CONGRATS[1];
+            } else if(all_guesses.length == 6) {
+                t = CONGRATS[2];
+            } else if(all_guesses.length > 6) {
+                t = CONGRATS[3];
+            } 
+            if(mistakes == ALLOWED_MISTAKES) {
+                t = CONGRATS[4];
+            }
+            $("#results_pop h2").text(t);
+        }
+
+        function refreshMistakes() {
+            const mis = ALLOWED_MISTAKES - mistakes;
+            $(".mistakes div").remove();
+            for(var i=0; i<mis; i++) {
+                $(".mistakes").append("<div>");
+            }
+        }
+
+        function removeMistake() {
+            $(".mistakes div:last").effect( "puff", {}, SPEED, function(){ $(this).remove(); } );
+            if(mistakes == ALLOWED_MISTAKES) {
+                $(".mistakes span").fadeOut();
+            }
+        }
+
+        function resetAll() {
+            groups_found = [];
+            addAllWordBlocks();
+            refreshMistakes();
+            $("#buttons_results").hide();
+            $("#buttons_default").show();
+            $("#results_pop").hide();
+            game_over = false;
+        }
+
+        function viewResults() {
+            $("#results_pop").fadeIn(SPEED);
+        }
+        function hideResults() {
+            $("#results_pop").fadeOut(SPEED);
+        }
+
+        //---------------------------- INIT ----------------------------//
+        $(function() {
+            
+            resetAll();
+
+        })
+
+    </script>
+</html>

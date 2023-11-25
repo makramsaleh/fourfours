@@ -273,6 +273,9 @@
             $(".selected").removeClass("selected");
             $(".submit").addClass("disabled");
             $(".deselect").addClass("disabled");
+
+            let cook = Cookies.get('guesses');
+            console.log("Cookies", cook);
         }
         function toggleSelect(e) {
             if(game_over) return;
@@ -328,9 +331,7 @@
                 }
             }
             console.log(all_guesses);
-            //Cookies.set('guesses', "test");
-            // let cook = Cookies.get('guesses');
-            // console.log("Cookies", cook);
+            Cookies.set('guesses', "test");
         }
 
         function moveWinningGroup(group) {

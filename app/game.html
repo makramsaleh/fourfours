@@ -2,12 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Connections</title>
+        <title>Four Fours</title>
 
         <link rel="stylesheet" href="stuff/reset.css">
         
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="stuff/jquery-ui.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
         
 
         <style>
@@ -240,6 +241,7 @@
             ["4-syllable names", ["Majdalani", "Mississippi", "Casablanca", "Valentino"]]
         ];
         */
+        const GAME_ID = "test1";
         const WORDS = [
             ["Musicals", ["1 a", "1 b", "1 c", "1 d"]],
             ["Luxury brands", ["2 a", "2 b", "2 c", "2 d"]],
@@ -326,6 +328,9 @@
                 }
             }
             console.log(all_guesses);
+            //Cookies.set('guesses', "test");
+            // let cook = Cookies.get('guesses');
+            // console.log("Cookies", cook);
         }
 
         function moveWinningGroup(group) {

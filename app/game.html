@@ -8,12 +8,23 @@
         
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="stuff/jquery-ui.min.js"></script>
+        <script src="stuff/fastclick.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
         
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
         <style>
+            * {
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari */
+                -khtml-user-select: none; /* Konqueror HTML */
+                -moz-user-select: none; /* Old versions of Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+            }
             body {
-                background-color: #B6A8FE;
+                background-color: #FFF;
                 font-family: Arial, Helvetica, sans-serif;
                 color: #999;
             }
@@ -542,6 +553,8 @@
 
         //---------------------------- INIT ----------------------------//
         $(function() {
+            
+            FastClick.attach(document.body);
             
             resetAll();
 

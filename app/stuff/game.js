@@ -280,6 +280,7 @@ function resetAll() {
     $("#buttons_default").show();
     $("#results_pop").hide();
     game_over = false;
+    $("#pop_title").text("Four Fours "+getGameNumber());
 }
 
 function viewResults() {
@@ -289,11 +290,11 @@ function hideResults() {
     $("#results_pop").fadeOut(SPEED);
 }
 
-function getGameTitle() {
+function getGameNumber() {
     if(typeof GAME_ID != "undefined" && typeof ALL_GAMES != "undefined") {
         for(var i=0; i<ALL_GAMES.length; i++) {
             if(ALL_GAMES[i] == GAME_ID) {
-                return "\nPuzzle #"+(i+1);
+                return "#"+(i+1);
             }
         }
     }
@@ -302,7 +303,8 @@ function getGameTitle() {
 
 function getResultsAsText() {
     let text = "Four Fours";
-    text += getGameTitle();
+    let num = getGameNumber();
+    if(num != "") text += "\nPuzzle "+num;
     text += "\n";
     for (var r=0; r<all_guesses.length; r++) {    // Guesses
         for(var c=0;c<4; c++) {

@@ -289,11 +289,46 @@ function hideResults() {
     $("#results_pop").fadeOut(SPEED);
 }
 
+function getGameTitle() {
+    if(typeof GAME_ID != "undefined" && typeof ALL_GAMES != "undefined") {
+        for(var i=0; i<ALL_GAMES.length; i++) {
+            if(ALL_GAMES[i] == GAME_ID) {
+                return "\nPuzzle #"+(i+1);
+            }
+        }
+    }
+    return "";
+}
+
+function getResultsAsText() {
+    let text = "Four Fours";
+    text += getGameTitle();
+    text += "\n";
+    for (var r=0; r<all_guesses.length; r++) {    // Guesses
+        for(var c=0;c<4; c++) {
+            text += EMOJIS[ all_guesses[r][c] ];
+        }
+        text += "\n";
+    }
+    return text;
+}
+function shareResults() {
+    if (!('share' in navigator)) {
+        alert("Oops! Can't share from this browser.");
+        return;
+    }
+    navigator.share({
+        text: getResultsAsText()
+      });
+}
+
 //---------------------------- INIT ----------------------------//
 $(function() {
     
     FastClick.attach(document.body);
 
     resetAll();
+
+    $("#share").on("click", shareResults);
 
 })

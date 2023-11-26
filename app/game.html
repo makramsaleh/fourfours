@@ -37,6 +37,8 @@
             ];
             */
             const GAME_ID = "test1";
+            const ALL_GAMES = ["test0", "test1", "test2", "test3"];
+
             const WORDS = [
                 ["Musicals", ["1 a", "1 b", "1 c", "1 d"]],
                 ["Luxury brands", ["2 a", "2 b", "2 c", "2 d"]],
@@ -54,13 +56,11 @@
                 <div class="pop_close" onclick="hideResults()"><img src="stuff/x.png" width="100%"></div>
                 <div class="pop_content">
                     <h2>Amazing!</h2>
-                    <p>Connections #02</p>
-                    <div class="trys">
-                        
-                    </div>
-                    <div class="button primary">Share Your Results</div>
+                    <p>Four Fours #02</p>
+                    <div class="trys"></div>
+                    <div class="button primary" id="share">Share Your Results</div>
                     <p></p>
-                    <div class="button">Play Next Puzzle</div>
+                    <div class="button" id="playnext">Play Next Puzzle</div>
                 </div>
             </div>
 

@@ -273,9 +273,6 @@
             $(".selected").removeClass("selected");
             $(".submit").addClass("disabled");
             $(".deselect").addClass("disabled");
-
-            let cook = Cookies.get('guesses');
-            console.log("Cookies", cook);
         }
         function toggleSelect(e) {
             if(game_over) return;
@@ -310,6 +307,7 @@
             if($(".selected").length != 4) return;
 
             let found_group = checkSelectedGroup();
+            let guess_is_new = saveGuess();
             if(found_group != -1) {
                 // Matching group
                 groups_found.push(found_group);
@@ -321,17 +319,17 @@
             } else {
                 // Not matching
                 $(".selected").effect("shake", {distance:5});
-                //deselectAll();
-                mistakes += 1;
-                //refreshMistakes();
-                removeMistake();
-                if(mistakes == ALLOWED_MISTAKES) {
-                    // Game over - mistakes
-                    afterGameOver();
+                // Check if this is a new mistake
+                if(guess_is_new) {
+                    mistakes += 1;
+                    removeMistake();
+                    if(mistakes == ALLOWED_MISTAKES) {
+                        // Game over - mistakes
+                        afterGameOver();
+                    }
                 }
             }
             console.log(all_guesses);
-            Cookies.set('guesses', "test");
         }
 
         function moveWinningGroup(group) {
@@ -438,13 +436,31 @@
             $(".selected").each(function() {
                 guessed.push( findGroup($(this).text()) );
             });
-            all_guesses.push(guessed);
+
             let group = guessed[0];
             for(var i=1; i<4; i++) {
                 if(guessed[i] != group) return -1;
                 group = guessed[i];
             }
             return group;
+        }
+
+        function saveGuess() {
+            let guessed = [];
+            $(".selected").each(function() {
+                guessed.push( findGroup($(this).text()) );
+            });
+            // Add the guess all_guesses guesses only if it wasn't tried before
+            let done_before = false;
+            let new_guess = guessed.sort().join("");
+            for(var i=0;i<all_guesses.length;i++) {
+                if(all_guesses[i].sort().join("") == new_guess) done_before = true;
+            }
+            if(!done_before) {
+                all_guesses.push(guessed);
+                return true;
+            }
+            return false;
         }
 
         function findGroup(word) {

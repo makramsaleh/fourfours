@@ -52,6 +52,15 @@ function toggleSelect(e) {
     }
 }
 
+function onCorrectGuess(found_group) {
+    groups_found.push(found_group);
+    moveWinningGroup(found_group);
+    if(checkGameOver()) {
+        // Game over - all guessed
+        afterGameOver();
+    }
+}
+
 function onSubmit(){
     if($(".selected").length != 4) return;
 
@@ -59,12 +68,7 @@ function onSubmit(){
     let guess_is_new = saveGuess();
     if(found_group != -1) {
         // Matching group
-        groups_found.push(found_group);
-        moveWinningGroup(found_group);
-        if(checkGameOver()) {
-            // Game over - all guessed
-            afterGameOver();
-        }
+        onCorrectGuess(found_group);
     } else {
         // Not matching
         $(".selected").effect("shake", {distance:5});
@@ -79,14 +83,16 @@ function onSubmit(){
         }
     }
     console.log(all_guesses);
-    Cookies.set(GAME_ID+'guesses', all_guesses);
+    storeInCookie();
 }
 
 function moveWinningGroup(group) {
     // Remove found words from places array
     let index = 0;
+    let removed_words = [];
     while(index < words_places.length) {
         if(words_places[index][0] == group) {
+            removed_words.push(words_places[index][1]);
             let spl = words_places.splice(index, 1);
             console.log(spl);
             continue;
@@ -95,10 +101,10 @@ function moveWinningGroup(group) {
     }
     // Animate
     let c = 0;
-    $(".selected").each(function(){
-        $(this).animate({"top": (groups_found.length-1) * (SIZE+SPACING), "left": c*(SIZE+SPACING), "backgroundColor":COLORS[group]}, SPEED);
+    for(var i=0; i<removed_words.length; i++) {
+        $(removed_words[i]).animate({"top": (groups_found.length-1) * (SIZE+SPACING), "left": c*(SIZE+SPACING), "backgroundColor":COLORS[group]}, SPEED);
         c++;
-    });
+    }
     addGroupBox(group);
     // Move other words to new places
     reshuffleAll(true);
@@ -181,18 +187,21 @@ function reshuffleAll(animate) {
     }
 }
 
-function checkSelectedGroup() {
-    let guessed = [];
-    $(".selected").each(function() {
-        guessed.push( findGroup($(this).text()) );
-    });
-
+function findGuessedGroup(guessed) {
     let group = guessed[0];
     for(var i=1; i<4; i++) {
         if(guessed[i] != group) return -1;
         group = guessed[i];
     }
     return group;
+}
+
+function checkSelectedGroup() {
+    let guessed = [];
+    $(".selected").each(function() {
+        guessed.push( findGroup($(this).text()) );
+    });
+    return findGuessedGroup(guessed);
 }
 
 function saveGuess() {
@@ -230,7 +239,7 @@ function checkGameOver() {
 function afterGameOver() {
     game_over = true;
     $("#buttons_results").fadeIn(SPEED);
-    $("#buttons_default").fadeOut(SPEED);
+    $("#buttons_default").hide();
 
     // Show tries/score
     for (var r=0; r<all_guesses.length; r++) {
@@ -282,6 +291,7 @@ function resetAll() {
     $("#results_pop").hide();
     game_over = false;
     $("#pop_title").text("Four Fours "+getGameNumber());
+    checkCookies();
 }
 
 function viewResults() {
@@ -323,6 +333,52 @@ function shareResults() {
     navigator.share({
         text: getResultsAsText()
       });
+}
+
+//---------------------------- COOKIE STUFF ----------------------------//
+
+function encodeGuesses() {
+    // Encode all_guesses to be stored in a cookie as a string value
+    // Format: 2,3,1,3|2,3,1,2|...
+    let parts = [];
+    for (var r=0; r<all_guesses.length; r++) {    // Guesses
+        parts.push( all_guesses[r].join(",") );
+    }
+    return parts.join("|");
+}
+function decodeGuesses(encoded_guesses) {
+    // Decodes guesses string back to a two-dimensional array
+    if(!encoded_guesses.length) return "";
+    let parts = encoded_guesses.split("|");
+    let guesses = [];
+    for(var r=0; r<parts.length; r++) {
+        guesses.push( parts[r].split(",") );
+    }
+    return guesses;
+}
+
+function storeInCookie() {
+    // Guesses history is the only thing we need to store in a cookie
+    Cookies.set('guesses_'+GAME_ID, encodeGuesses());
+}
+
+function checkCookies() {
+    let cookie_guesses = Cookies.get('guesses_'+GAME_ID);
+    //cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0|0,0,0,0|1,1,1,1'; // For testing
+
+    if(cookie_guesses != undefined) {
+
+        let decoded_guesses = decodeGuesses(cookie_guesses);
+        all_guesses = JSON.parse(JSON.stringify(decoded_guesses));
+
+        for (let i = 0; i < decoded_guesses.length; i++) {
+            let found_group = findGuessedGroup(decoded_guesses[i]);
+            if(found_group != -1) {
+                // Matching group
+                onCorrectGuess(found_group, true);
+            }
+        }
+    }
 }
 
 //---------------------------- INIT ----------------------------//

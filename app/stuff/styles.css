@@ -87,6 +87,7 @@ h1 {
     text-align: center;
     cursor: pointer;
     color:#333;
+    display: block;
 }
 .button.submit, .button.primary {
     margin-right: 0px;

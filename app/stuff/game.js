@@ -300,6 +300,7 @@ function resetAll() {
     game_over = false;
     $("#pop_title").text("Four Fours "+getGameNumber());
     checkCookies();
+    resetNav();
 }
 
 function viewResults() {
@@ -309,15 +310,20 @@ function hideResults() {
     $("#results_pop").fadeOut(SPEED);
 }
 
-function getGameNumber() {
+function getGameIndex() {
     if(typeof GAME_ID != "undefined" && typeof ALL_GAMES != "undefined") {
         for(var i=0; i<ALL_GAMES.length; i++) {
             if(ALL_GAMES[i] == GAME_ID) {
-                return "#"+(i+1);
+                return i;
             }
         }
     }
-    return "";
+    return -1;
+}
+
+function getGameNumber() {
+    let index = getGameIndex();
+    return (index!=-1 ? "#"+(index+1) : "");
 }
 
 function getResultsAsText() {
@@ -387,6 +393,18 @@ function checkCookies() {
                 onWrongGuess(true);
             }
         }
+    }
+}
+
+//---------------------------- Navigation ----------------------------//
+function resetNav() {
+    let index = getGameIndex();
+    // If this is the last game in the series hide "next" button 
+    if(index != -1 && index<ALL_GAMES.length-1) {
+        // Click on "play next" to go to the next game in the series
+        $("#playnext").attr("href", ALL_GAMES[index+1]+".html");
+    } else {
+        $("#playnext").hide();
     }
 }
 

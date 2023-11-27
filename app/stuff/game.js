@@ -79,6 +79,7 @@ function onSubmit(){
         }
     }
     console.log(all_guesses);
+    Cookies.set(GAME_ID+'guesses', all_guesses);
 }
 
 function moveWinningGroup(group) {
@@ -110,7 +111,7 @@ function addGroupBox(group) {
         .hide()
         .html('<div><div class="t">'+WORDS[group][0]+'</div><div class="w">'+WORDS[group][1].join(", ")+'</div></div>')
     $("#grid").append(gr);
-    $(gr).delay(SPEED).fadeIn(SPEED * 2);
+    $(gr).delay(SPEED*2).fadeIn(SPEED * 2);
 }
 
 function resetFontSizes() {

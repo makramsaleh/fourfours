@@ -61,6 +61,15 @@ function onCorrectGuess(found_group) {
     }
 }
 
+function onWrongGuess(no_animation) {
+    mistakes += 1;
+    removeMistake(no_animation);
+    if(mistakes == ALLOWED_MISTAKES) {
+        // Game over - mistakes
+        afterGameOver();
+    }
+}
+
 function onSubmit(){
     if($(".selected").length != 4) return;
 
@@ -74,12 +83,7 @@ function onSubmit(){
         $(".selected").effect("shake", {distance:5});
         // Check if this is a new mistake
         if(guess_is_new) {
-            mistakes += 1;
-            removeMistake();
-            if(mistakes == ALLOWED_MISTAKES) {
-                // Game over - mistakes
-                afterGameOver();
-            }
+            onWrongGuess(found_group);
         }
     }
     console.log(all_guesses);
@@ -275,8 +279,12 @@ function refreshMistakes() {
     }
 }
 
-function removeMistake() {
-    $(".mistakes div:last").effect( "puff", {}, SPEED, function(){ $(this).remove(); } );
+function removeMistake(no_animation) {
+    if(no_animation) {
+        $(".mistakes div:last").remove();
+    } else {
+        $(".mistakes div:last").effect( "puff", {}, SPEED, function(){ $(this).remove(); } );
+    }
     if(mistakes == ALLOWED_MISTAKES) {
         $(".mistakes span").fadeOut();
     }
@@ -364,7 +372,7 @@ function storeInCookie() {
 
 function checkCookies() {
     let cookie_guesses = Cookies.get('guesses_'+GAME_ID);
-    //cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0|0,0,0,0|1,1,1,1'; // For testing
+    cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0'; // For testing
 
     if(cookie_guesses != undefined) {
 
@@ -374,8 +382,9 @@ function checkCookies() {
         for (let i = 0; i < decoded_guesses.length; i++) {
             let found_group = findGuessedGroup(decoded_guesses[i]);
             if(found_group != -1) {
-                // Matching group
                 onCorrectGuess(found_group, true);
+            } else {
+                onWrongGuess(true);
             }
         }
     }

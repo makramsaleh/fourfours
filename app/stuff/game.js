@@ -372,7 +372,7 @@ function storeInCookie() {
 
 function checkCookies() {
     let cookie_guesses = Cookies.get('guesses_'+GAME_ID);
-    cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0'; // For testing
+    //cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0'; // For testing
 
     if(cookie_guesses != undefined) {
 

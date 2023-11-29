@@ -16,6 +16,11 @@ let all_guesses = [];
 let words_places = [];
 let game_over = false;
 
+let sfx_over;
+let sfx_correct;
+let sfx_wrong;
+
+
 //---------------------------- GRID ----------------------------//
 function deselectAll() {
     selected_count = 0;
@@ -60,8 +65,7 @@ function onCorrectGuess(found_group) {
         afterGameOver();
     } else {
         // play sound effect
-        var audio = new Audio('stuff/sounds/correct.mp3');
-        audio.play();
+        sfx_correct.play();
     }
 }
 
@@ -72,9 +76,8 @@ function onWrongGuess(no_animation) {
         // Game over - mistakes
         afterGameOver();
     } else {
-        // play sound effect
-        var audio = new Audio('stuff/sounds/wrong.mp3');
-        audio.play();
+        // Play sound effect
+        sfx_wrong.play();
     }
 }
 
@@ -279,8 +282,7 @@ function afterGameOver() {
     $("#results_pop h2").text(t);
 
     // Play sound effect
-    var audio = new Audio('stuff/sounds/over.mp3');
-    audio.play();
+    sfx_over.play();
 }
 
 function refreshMistakes() {
@@ -429,4 +431,12 @@ $(function() {
 
     $("#share").on("click", shareResults);
 
+
+    // make the sound effects work on mobile
+    $(document).on("touchstart", function(){
+        sfx_over = new Audio('stuff/sounds/over.mp3');
+        sfx_correct = new Audio('stuff/sounds/correct.mp3');
+        sfx_wrong = new Audio('stuff/sounds/wrong.mp3');
+    });
 })
+

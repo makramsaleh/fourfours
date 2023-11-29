@@ -16,10 +16,9 @@ let all_guesses = [];
 let words_places = [];
 let game_over = false;
 
-let sfx_over;
-let sfx_correct;
-let sfx_wrong;
-
+let sfx_over = new Audio('../stuff/sounds/over.mp3');
+let sfx_correct = new Audio('../stuff/sounds/correct.mp3');
+let sfx_wrong = new Audio('../stuff/sounds/wrong.mp3');
 
 //---------------------------- GRID ----------------------------//
 function deselectAll() {
@@ -430,10 +429,6 @@ $(function() {
     resetAll();
 
     $("#share").on("click", shareResults);
-
-    sfx_over = new Audio('../stuff/sounds/over.mp3');
-    sfx_correct = new Audio('../stuff/sounds/correct.mp3');
-    sfx_wrong = new Audio('../stuff/sounds/wrong.mp3');
 
     // make the sound effects work on mobile
     $(document).on("touchstart", function(){

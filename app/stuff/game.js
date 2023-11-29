@@ -58,6 +58,10 @@ function onCorrectGuess(found_group) {
     if(checkGameOver()) {
         // Game over - all guessed
         afterGameOver();
+    } else {
+        // play sound effect
+        var audio = new Audio('stuff/sounds/correct.mp3');
+        audio.play();
     }
 }
 
@@ -67,6 +71,10 @@ function onWrongGuess(no_animation) {
     if(mistakes == ALLOWED_MISTAKES) {
         // Game over - mistakes
         afterGameOver();
+    } else {
+        // play sound effect
+        var audio = new Audio('stuff/sounds/wrong.mp3');
+        audio.play();
     }
 }
 
@@ -269,6 +277,10 @@ function afterGameOver() {
         t = CONGRATS[4];
     }
     $("#results_pop h2").text(t);
+
+    // Play sound effect
+    var audio = new Audio('stuff/sounds/over.mp3');
+    audio.play();
 }
 
 function refreshMistakes() {

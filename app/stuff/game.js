@@ -431,12 +431,15 @@ $(function() {
 
     $("#share").on("click", shareResults);
 
+    sfx_over = new Audio('../stuff/sounds/over.mp3');
+    sfx_correct = new Audio('../stuff/sounds/correct.mp3');
+    sfx_wrong = new Audio('../stuff/sounds/wrong.mp3');
 
     // make the sound effects work on mobile
     $(document).on("touchstart", function(){
-        sfx_over = new Audio('stuff/sounds/over.mp3');
-        sfx_correct = new Audio('stuff/sounds/correct.mp3');
-        sfx_wrong = new Audio('stuff/sounds/wrong.mp3');
+        sfx_over = new Audio('../stuff/sounds/over.mp3');
+        sfx_correct = new Audio('../stuff/sounds/correct.mp3');
+        sfx_wrong = new Audio('../stuff/sounds/wrong.mp3');
     });
 })
 

@@ -311,7 +311,7 @@ function resetAll() {
     $("#buttons_default").show();
     $("#results_pop").hide();
     game_over = false;
-    $("#pop_title").text("Four Fours "+getGameNumber());
+    $("#pop_title").text("Joy to the Words "+getGameNumber());
     checkCookies();
     resetNav();
 }
@@ -340,7 +340,7 @@ function getGameNumber() {
 }
 
 function getResultsAsText() {
-    let text = "Four Fours";
+    let text = "Joy to the Words";
     let num = getGameNumber();
     if(num != "") text += "\nPuzzle "+num;
     text += "\n";

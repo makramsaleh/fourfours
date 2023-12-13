@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Four Fours</title>
+
+        <link rel="stylesheet" href="../stuff/reset.css">
+        <link rel="stylesheet" href="../stuff/styles.css">
+        
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="../stuff/jquery-ui.min.js"></script>
+        <script src="../stuff/fastclick.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+        
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        
+        <script type="text/javascript">
+            //---------------------------- WORDS ----------------------------//
+            // Green
+            // Yellow
+            // Blue
+            // Purple
+            const GAME_ID = "2222";
+            const ALL_GAMES = ["1010", "2222", "3000", "4040", "5555", "6600", "7070", "8080"];
+            
+            const WORDS = [
+                ["Classic books", ["1984", "Dracula", "Matilda", "Emma"]],
+                ["Times of day", ["Mornings", "Afternoons", "Evenings", "Weekends"]],
+                ["Years of cousins births", ["1983", "1985", "1990", "1992"]],
+                ["Taylor Swift albums", ["1989", "Midnights", "Lover", "Red"]]
+            ];
+        </script>
+        <script src="../stuff/game.js"></script>
+
+    </head>
+    <body>
+        <div id="container">
+
+            <div id="results_pop" class="pop">
+                <div class="pop_close" onclick="hideResults()"><img src="../stuff/x.png" width="100%"></div>
+                <div class="pop_content">
+                    <h2>Amazing!</h2>
+                    <p id="pop_title">Four Fours</p>
+                    <div class="trys"></div>
+                    <div class="button primary" id="share">Share Your Results</div>
+                    <p></p>
+                    <a class="button" id="playnext" href="#">Play Next Puzzle</a>
+                </div>
+            </div>
+
+            <h1 class="headline">Create four groups of four!</h1>    
+            <div id="grid"></div>
+
+            <div class="mistakes">
+                <span>Mistakes Remaining:</span>
+            </div>
+
+            <div class="buttons" id="buttons_default">
+                <div class="button" onclick="reshuffleAll(true)">Shuffle</div>
+                <div class="button deselect" onclick="deselectAll()">Deselect All</div>
+                <div class="button submit disabled" onclick="onSubmit()">Submit</div>
+            </div>
+
+            <div class="buttons" id="buttons_results">
+                <div class="button results primary" onclick="viewResults()">View Results</div>
+            </div>
+
+        </div>
+    </body>
+    
+</html>

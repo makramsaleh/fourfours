@@ -8,9 +8,12 @@
                         supported by Chrome, Edge, Opera and Firefox */
 }
 body {
-    background-color: #FFF;
+    background-color: #B4A8FF;
     font-family: Arial, Helvetica, sans-serif;
     color: #999;
+}
+body.playing {
+    background-color: #fff;
 }
 h1 { 
     color:gray;
@@ -173,4 +176,24 @@ h1 {
     border-radius: 100px;
     margin: 1px 3px;
     float: left;
+}
+
+#intro_pop {
+    width: 100%;
+    height: 100%;
+    background: #B4A8FF;
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+}
+#intro_pop .pop_content {
+    margin-top:150px
+}
+#intro_pop h2 {
+    font-size: 1.7em;
+    margin: 20px 0;
+}
+#game_title {
+    font-weight: bold;
 }

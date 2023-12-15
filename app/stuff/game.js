@@ -312,6 +312,7 @@ function resetAll() {
     $("#results_pop").hide();
     game_over = false;
     $("#pop_title").text("Joy to the Words "+getGameNumber());
+    $("#game_title").text("Game "+getGameNumber());
     checkCookies();
     resetNav();
 }
@@ -394,6 +395,7 @@ function checkCookies() {
     //cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0'; // For testing
 
     if(cookie_guesses != undefined) {
+        hideIntro(true);
 
         let decoded_guesses = decodeGuesses(cookie_guesses);
         all_guesses = JSON.parse(JSON.stringify(decoded_guesses));
@@ -407,6 +409,11 @@ function checkCookies() {
             }
         }
     }
+}
+
+function hideIntro(fast) {
+    $("#intro_pop").fadeOut(fast ? SPEED : 0);
+    $("body").addClass("playing");
 }
 
 //---------------------------- Navigation ----------------------------//
@@ -434,7 +441,8 @@ $(function() {
     $(document).on("touchstart", function(){
         sfx_over = new Audio('../stuff/sounds/over.mp3');
         sfx_correct = new Audio('../stuff/sounds/correct.mp3');
-        sfx_wrong = new Audio('../stuff/sounds/wrong.mp3');
+        sfx_wrong = new Audio('../stuff/sounds/joy-to-the-world.mp3');
     });
+
 })
 

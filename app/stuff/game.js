@@ -319,9 +319,11 @@ function resetAll() {
 
 function viewResults() {
     $("#results_pop").fadeIn(SPEED);
+    sfx_joy.play();
 }
 function hideResults() {
     $("#results_pop").fadeOut(SPEED);
+    sfx_joy.pause();
 }
 
 function getGameIndex() {
@@ -441,7 +443,8 @@ $(function() {
     $(document).on("touchstart", function(){
         sfx_over = new Audio('../stuff/sounds/over.mp3');
         sfx_correct = new Audio('../stuff/sounds/correct.mp3');
-        sfx_wrong = new Audio('../stuff/sounds/joy-to-the-world.mp3');
+        sfx_wrong = new Audio('../stuff/sounds/wrong.mp3');
+        sfx_joy = new Audio('../stuff/sounds/joy-to-the-world.mp3');
     });
 
 })

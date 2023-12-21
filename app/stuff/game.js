@@ -13,6 +13,7 @@ let selected_count = 0;
 let mistakes = 0;
 let groups_found = [];
 let all_guesses = [];
+let all_guesses_words = [];
 let words_places = [];
 let game_over = false;
 
@@ -221,17 +222,20 @@ function checkSelectedGroup() {
 
 function saveGuess() {
     let guessed = [];
+    let guessed_words = [];
     $(".selected").each(function() {
         guessed.push( findGroup($(this).text()) );
+        guessed_words.push( $(this).text() );
     });
     // Add the guess all_guesses guesses only if it wasn't tried before
     let done_before = false;
-    let new_guess = guessed.sort().join("");
-    for(var i=0;i<all_guesses.length;i++) {
-        if(all_guesses[i].sort().join("") == new_guess) done_before = true;
+    let new_guess = guessed_words.sort().join("");
+    for(var i=0;i<all_guesses_words.length;i++) {
+        if(all_guesses_words[i].sort().join("") == new_guess) done_before = true;
     }
     if(!done_before) {
         all_guesses.push(guessed);
+        all_guesses_words.push(guessed_words);
         return true;
     }
     return false;
@@ -281,6 +285,18 @@ function afterGameOver() {
     }
     $("#results_pop h2").text(t);
 
+    // Game lost
+    if(mistakes == ALLOWED_MISTAKES) {
+        // Show all words and categories
+        console.log("Lost", groups_found);
+        for(var i=0; i<4; i++) {
+            if(groups_found.indexOf(i) == -1) {
+                console.log("moving", i);
+                moveWinningGroup(i);
+            }
+        }
+    }
+
     // Play sound effect
     sfx_over.play();
 }
@@ -294,6 +310,8 @@ function refreshMistakes() {
 }
 
 function removeMistake(no_animation) {
+    console.log("mistakes | remain", mistakes, ALLOWED_MISTAKES-mistakes);
+    
     if(no_animation) {
         $(".mistakes div:last").remove();
     } else {
@@ -369,12 +387,12 @@ function shareResults() {
 
 //---------------------------- COOKIE STUFF ----------------------------//
 
-function encodeGuesses() {
-    // Encode all_guesses to be stored in a cookie as a string value
-    // Format: 2,3,1,3|2,3,1,2|...
+function encodeGuesses(guesses_array) {
+    // Encode guesses_array to be stored in a cookie as a string value
+    // Format: 2,3,1,3|2,3,1,2|... ___ OR ___ word1,word2,word3,word4|word1,word2,word3,word4|...
     let parts = [];
-    for (var r=0; r<all_guesses.length; r++) {    // Guesses
-        parts.push( all_guesses[r].join(",") );
+    for (var r=0; r<guesses_array.length; r++) {    // Guesses
+        parts.push( guesses_array[r].join(",") );
     }
     return parts.join("|");
 }
@@ -391,23 +409,28 @@ function decodeGuesses(encoded_guesses) {
 
 function storeInCookie() {
     // Guesses history is the only thing we need to store in a cookie
-    Cookies.set('guesses_'+GAME_ID, encodeGuesses());
+    Cookies.set('guesses_'+GAME_ID, encodeGuesses( all_guesses ));
+    // Store words as well
+    Cookies.set('guesses_words_'+GAME_ID, encodeGuesses( all_guesses_words ));
 }
 
 function checkCookies() {
     let cookie_guesses = Cookies.get('guesses_'+GAME_ID);
+    let cookie_guesses_words = Cookies.get('guesses_words_'+GAME_ID);
     //cookie_guesses = '0,0,1,3|3,3,3,3|2,2,2,2|1,1,0,0'; // For testing
 
     if(cookie_guesses != undefined) {
         hideIntro(true);
 
         let decoded_guesses = decodeGuesses(cookie_guesses);
+        let decoded_guesses_words = decodeGuesses(cookie_guesses_words);
         all_guesses = JSON.parse(JSON.stringify(decoded_guesses));
+        all_guesses_words = JSON.parse(JSON.stringify(decoded_guesses_words));
 
         for (let i = 0; i < decoded_guesses.length; i++) {
             let found_group = findGuessedGroup(decoded_guesses[i]);
             if(found_group != -1) {
-                onCorrectGuess(found_group, true);
+                onCorrectGuess(found_group);
             } else {
                 onWrongGuess(true);
             }

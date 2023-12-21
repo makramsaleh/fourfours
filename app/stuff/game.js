@@ -110,7 +110,7 @@ function moveWinningGroup(group) {
         if(words_places[index][0] == group) {
             removed_words.push(words_places[index][1]);
             let spl = words_places.splice(index, 1);
-            console.log(spl);
+            //console.log(spl);
             continue;
         }
         index++;
@@ -288,10 +288,9 @@ function afterGameOver() {
     // Game lost
     if(mistakes == ALLOWED_MISTAKES) {
         // Show all words and categories
-        console.log("Lost", groups_found);
         for(var i=0; i<4; i++) {
             if(groups_found.indexOf(i) == -1) {
-                console.log("moving", i);
+                groups_found.push(i); // To avoid moving the group to the same place
                 moveWinningGroup(i);
             }
         }

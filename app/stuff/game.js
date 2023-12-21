@@ -16,6 +16,7 @@ let all_guesses = [];
 let all_guesses_words = [];
 let words_places = [];
 let game_over = false;
+let groups_to_reveal = [];
 
 let sfx_over = new Audio('../stuff/sounds/over.mp3');
 let sfx_correct = new Audio('../stuff/sounds/correct.mp3');
@@ -98,7 +99,7 @@ function onSubmit(){
             onWrongGuess(found_group);
         }
     }
-    console.log(all_guesses);
+    //console.log(all_guesses);
     storeInCookie();
 }
 
@@ -287,17 +288,28 @@ function afterGameOver() {
 
     // Game lost
     if(mistakes == ALLOWED_MISTAKES) {
-        // Show all words and categories
+        // Reveal all words and categories
         for(var i=0; i<4; i++) {
             if(groups_found.indexOf(i) == -1) {
-                groups_found.push(i); // To avoid moving the group to the same place
-                moveWinningGroup(i);
+                // do it one by one after a delay between each one
+                groups_to_reveal.push(i);
             }
         }
+        revealNextGroup();
     }
 
     // Play sound effect
     sfx_over.play();
+}
+
+function revealNextGroup() {
+    if(groups_to_reveal.length == 0) return;
+    setTimeout(function(){
+        let group = groups_to_reveal.shift();
+        groups_found.push(group); // To avoid moving the group to the same place
+        moveWinningGroup(group);
+        revealNextGroup();
+    }, SPEED * 3);
 }
 
 function refreshMistakes() {
@@ -309,8 +321,6 @@ function refreshMistakes() {
 }
 
 function removeMistake(no_animation) {
-    console.log("mistakes | remain", mistakes, ALLOWED_MISTAKES-mistakes);
-    
     if(no_animation) {
         $(".mistakes div:last").remove();
     } else {
